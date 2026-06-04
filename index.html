@@ -100,7 +100,14 @@ function getStorage(k){
     return st;
   } catch(e) { return null; }
 }
-function sByT(docs,desc){ if(desc===undefined) desc=true; return docs.sort(function(a,b){ var ta=a.createdAt?(a.createdAt.seconds||0):0; var tb=b.createdAt?(b.createdAt.seconds||0):0; return desc?(tb-ta):(ta-tb); }); }
+function sByT(docs,desc){ 
+  if(desc===undefined) desc=false; // Diubah ke false agar urutan naik (ascending) sesuai waktu upload
+  return docs.sort(function(a,b){ 
+    var ta=a.createdAt?(a.createdAt.seconds||0):0; 
+    var tb=b.createdAt?(b.createdAt.seconds||0):0; 
+    return desc?(tb-ta):(ta-tb); 
+  }); 
+}
 function getOpts(k){ if(KELAS_ABC.indexOf(k)>-1) return ['A','B','C']; return ['A','B','C','D']; }
 var LEVEL_COLORS={mudah:{bg:'bg-success/15',border:'border-success/40',text:'text-success',label:'MUDAH'},sedang:{bg:'bg-warning/15',border:'border-warning/40',text:'text-warning',label:'SEDANG'},sulit:{bg:'bg-danger/15',border:'border-danger/40',text:'text-danger',label:'SULIT'}};
 function fetchSoal(mapel,kelas){ var db=getDB(activeClass); if(!db) return Promise.resolve([]); var q=db.collection('questions'); if(mapel) q=q.where('mapel','==',mapel); if(kelas) q=q.where('kelas','==',kelas); return q.get().then(function(s){ var d=[]; s.forEach(function(doc){ var dt=doc.data(); dt._id=doc.id; d.push(dt); }); return sByT(d,false); }).catch(function(){ return []; }); }
